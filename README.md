@@ -18,53 +18,56 @@ The pipeline:
 
 ## What is Fuzzy C-Means?
 
-FCM finds \(c\) centers \(v_i\) and a **membership matrix** \(U=[u_{ik}]\) where each sample \(x_k\) has *soft* memberships:
+FCM finds $c$ centers $v_i$ and a **membership matrix** $U=[u_{ik}]$ where each sample $x_k$ has soft memberships:
 
-- \(u_{ik}\in[0,1]\), and \(\sum_{i=1}^c u_{ik}=1\) for each \(k\).
+- $u_{ik}\in[0,1]$, and $\sum_{i=1}^c u_{ik}=1$ for each $k$ (every column of $U$ sums to 1).
+- Unlike K-Means’ hard labels, FCM tells you *how much* each point belongs to each cluster.
 
 ### Objective (Bezdek)
 
-Minimize the fuzzy within-cluster sum of squares:
+Minimize the fuzzy within-cluster SSE with fuzzifier $m>1$ (typical $1.6\!-\!2.0$):
 
-\[
-J_m(U,V)=\sum_{i=1}^{c}\sum_{k=1}^{n} u_{ik}^{\,m}\,\lVert x_k - v_i\rVert^2,
-\]
-
-with fuzzifier \(m>1\) (typical \(1.6\!-\!2.0\)). Larger \(m\) ⇒ softer memberships.
+$$
+J_m(U,V)=\sum_{i=1}^{c}\sum_{k=1}^{n} u_{ik}^{\,m}\,\lVert x_k - v_i\rVert^2.
+$$
 
 ### Alternating updates (Euclidean)
 
-Centers:
-\[
-v_i=\frac{\sum_{k} u_{ik}^{\,m} x_k}{\sum_{k} u_{ik}^{\,m}}
-\]
+**Centers**
+$$
+v_i=\frac{\sum_{k=1}^{n} u_{ik}^{\,m}\,x_k}{\sum_{k=1}^{n} u_{ik}^{\,m}}
+$$
 
-Memberships:
-\[
-u_{ik}=\left(\sum_{j=1}^{c}\left(\frac{\lVert x_k-v_i\rVert}{\lVert x_k-v_j\rVert}\right)^{\frac{2}{m-1}}\right)^{-1}
-\]
+**Memberships**
+$$
+u_{ik}=\left(\sum_{j=1}^{c}\left(\frac{\lVert x_k-v_i\rVert}{\lVert x_k-v_j\rVert}\right)^{\frac{2}{m-1}}\right)^{-1}.
+$$
 
-Stop when \(\lVert U^{(t)}-U^{(t-1)}\rVert_\infty<\texttt{error}\) or \(\texttt{maxiter}\) is reached.
+**Stopping**
+Stop when $\lVert U^{(t)}-U^{(t-1)}\rVert_\infty<\text{error}$ or when `maxiter` is reached.
 
 ---
 
 ## Choosing the number of clusters
 
-We report the **Fuzzy Partition Coefficient (FPC)** for each \(c\):
+We report the **Fuzzy Partition Coefficient (FPC)** per $c$:
 
-\[
+$$
 \mathrm{FPC}=\frac{1}{n}\sum_{k=1}^{n}\sum_{i=1}^{c} u_{ik}^{\,2}.
-\]
+$$
 
-Higher is better. Values near \(1/c\) indicate very fuzzy/overlapping partitions.
+- **Higher is better.** $\mathrm{FPC}\approx 1/c$ means very fuzzy/overlapping partitions.
+- In this 2-feature run, FPC **peaks at $c=2$** and then decreases as $c$ grows.
 
-> In this 2-feature run, FPC peaks at \(c=2\), then decreases as \(c\) grows.
+(Optionally, another index you may see is **Xie–Beni**:  
+$\displaystyle
+\mathrm{XB}=\frac{\sum_{i,k} u_{ik}^{\,m}\lVert x_k-v_i\rVert^2}{n\,\min_{i\ne j}\lVert v_i-v_j\rVert^2}
+$; lower is better. If two centers coincide, the denominator $\to 0$ and XB $\to \infty$.)
 
 ---
 
-## Results (your plots)
 
-> These image paths assume you ran `main.py` and the script wrote plots to `docs/`.
+## Results
 
 ### 1) FPC vs number of clusters
 ![FPC vs c](docs/fpc_vs_c.png)
