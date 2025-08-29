@@ -40,17 +40,11 @@ $$
 
 **Memberships**
 $$
-u_{ik} =
-\left(
-  \sum_{j=1}^{c}
-  \left(
-    \frac{\lVert x_k - v_i\rVert}{\lVert x_k - v_j\rVert}
-  \right)^{\frac{2}{m-1}}
-\right)^{-1}.
+u_{ik}=\left(\sum_{j=1}^{c}\left(\frac{\lVert x_k-v_i\rVert}{\lVert x_k-v_j\rVert}\right)^{\frac{2}{m-1}}\right)^{-1}.
 $$
 
 **Stopping**
-Stop when $\lVert U^{(t)} - U^{(t-1)}\rVert_{\infty} < \text{error}$ or when $\text{maxiter}$ is reached.
+Stop when $\lVert U^{(t)}-U^{(t-1)}\rVert_{\infty}<\text{error}$ or when `maxiter` is reached.
 
 ---
 
