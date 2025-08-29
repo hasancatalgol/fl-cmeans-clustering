@@ -35,7 +35,7 @@ $$
 
 **Centers**
 $$
-v_i=\frac{\sum_{k=1}^{n} u_{ik}^{\,m}\,x_k}{\sum_{k=1}^{n} u_{ik}^{\,m}}
+v_i=\frac{\sum_{k=1}^{n} u_{ik}^{\,m}\,x_k}{\sum_{k=1}^{n} u_{ik}^{\,m}}.
 $$
 
 **Memberships**
