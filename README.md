@@ -33,12 +33,15 @@ $$
 
 ### Alternating updates (Euclidean)
 
+
 **Centers**
+
 $$
 v_i=\frac{\sum_{k=1}^{n} u_{ik}^{\,m}\,x_k}{\sum_{k=1}^{n} u_{ik}^{\,m}}.
 $$
 
 **Memberships**
+
 $$
 u_{ik}=\left(\sum_{j=1}^{c}\left(\frac{\lVert x_k-v_i\rVert}{\lVert x_k-v_j\rVert}\right)^{\frac{2}{m-1}}\right)^{-1}.
 $$
