@@ -1,4 +1,4 @@
-# Fuzzy C-Means (C-Means) — README
+# Fuzzy C-Means (C-Means)
 
 This project applies **Fuzzy C-Means (FCM)** clustering (via `scikit-fuzzy`) to the *Default of Credit Card Clients* dataset using two features:
 
@@ -18,27 +18,47 @@ The pipeline:
 
 ## What is Fuzzy C-Means?
 
-Like K-Means, FCM finds `c` cluster **centers**, but it assigns **soft memberships** `u_{ik} ∈ [0,1]` for each point `k` in each cluster `i` (columns of `U` sum to 1). This is useful when clusters **overlap** or you want a measure of **how strongly** a point belongs to each cluster.
+FCM finds \(c\) centers \(v_i\) and a **membership matrix** \(U=[u_{ik}]\) where each sample \(x_k\) has *soft* memberships:
 
-**Objective (Euclidean)**  
-Minimize  
-`J_m(U,V) = Σ_i Σ_k (u_{ik}^m) * || x_k − v_i ||^2`  
-with `m > 1` (the *fuzzifier*, typically `1.6–2.0`). Higher `m` → softer memberships.
+- \(u_{ik}\in[0,1]\), and \(\sum_{i=1}^c u_{ik}=1\) for each \(k\).
 
-**Alternating updates**  
-- Centers: `v_i = (Σ_k u_{ik}^m * x_k) / (Σ_k u_{ik}^m)`  
-- Memberships (normalized inverse-distance rule)
+### Objective (Bezdek)
 
-Stop when memberships change less than a small `error` or when `maxiter` is reached.
+Minimize the fuzzy within-cluster sum of squares:
+
+\[
+J_m(U,V)=\sum_{i=1}^{c}\sum_{k=1}^{n} u_{ik}^{\,m}\,\lVert x_k - v_i\rVert^2,
+\]
+
+with fuzzifier \(m>1\) (typical \(1.6\!-\!2.0\)). Larger \(m\) ⇒ softer memberships.
+
+### Alternating updates (Euclidean)
+
+Centers:
+\[
+v_i=\frac{\sum_{k} u_{ik}^{\,m} x_k}{\sum_{k} u_{ik}^{\,m}}
+\]
+
+Memberships:
+\[
+u_{ik}=\left(\sum_{j=1}^{c}\left(\frac{\lVert x_k-v_i\rVert}{\lVert x_k-v_j\rVert}\right)^{\frac{2}{m-1}}\right)^{-1}
+\]
+
+Stop when \(\lVert U^{(t)}-U^{(t-1)}\rVert_\infty<\texttt{error}\) or \(\texttt{maxiter}\) is reached.
 
 ---
 
-## How we choose the number of clusters
+## Choosing the number of clusters
 
-We report the **Fuzzy Partition Coefficient (FPC)** for each `c`.  
-`FPC = (1/n) * Σ_k Σ_i (u_{ik}^2)` (higher is better; 1.0 is perfectly crisp, `≈1/c` is very fuzzy).
+We report the **Fuzzy Partition Coefficient (FPC)** for each \(c\):
 
-You’ll usually see the **best FPC at a small c**; as `c` grows, FPC tends to drop because partitions get fuzzier and centers creep together.
+\[
+\mathrm{FPC}=\frac{1}{n}\sum_{k=1}^{n}\sum_{i=1}^{c} u_{ik}^{\,2}.
+\]
+
+Higher is better. Values near \(1/c\) indicate very fuzzy/overlapping partitions.
+
+> In this 2-feature run, FPC peaks at \(c=2\), then decreases as \(c\) grows.
 
 ---
 
